@@ -4,11 +4,17 @@ Arquitectura: **nginx (frontend SPA + reverse-proxy)** → **FastAPI/Gunicorn (b
 El navegador solo habla con nginx; este redirige `/api`, `/uploads` y `/health` al backend, por lo que no hay CORS ni URLs de API embebidas en el build.
 
 ```
-Internet ──▶ Traefik (Dokploy) ──▶ frontend:80 (nginx)
-                                      ├─ /            → SPA (React build)
-                                      └─ /api,/uploads → backend:8000 (Gunicorn)
-                                                            └─▶ app-madrid-db-qfgme1:5432
+Internet ──▶ Traefik (Dokploy) ──▶ madrid-frontend:80 (nginx)
+                                      ├─ /             → SPA (React build)
+                                      └─ /api,/uploads → madrid-backend:8000 (Gunicorn)
+                                                             └─▶ app-madrid-db-qfgme1:5432
 ```
+
+> **Multi-proyecto en el mismo VM:** Dokploy usa Docker Swarm y todos los
+> proyectos comparten `dokploy-network`. Los servicios DEBEN tener nombres
+> únicos (aquí `madrid-backend` / `madrid-frontend`); con nombres genéricos
+> (`backend`/`frontend`) colisionan como alias DNS y una app carga otra. El
+> tráfico interno va por una red privada propia (`madrid-internal`).
 
 ## 1. Requisitos en Dokploy
 - La BD PostgreSQL ya existe: host `app-madrid-db-qfgme1`, db `madrid`, user `madrid_user`.
@@ -23,8 +29,8 @@ Internet ──▶ Traefik (Dokploy) ──▶ frontend:80 (nginx)
    - `POSTGRES_*` → credenciales de tu BD.
    - `SECRET_KEY` → genera uno nuevo: `python -c "import secrets; print(secrets.token_urlsafe(64))"`.
    - `FIRST_SUPERUSER_EMAIL` / `FIRST_SUPERUSER_PASSWORD`.
-5. **Domains**: añade tu dominio al servicio **`frontend`**, puerto **80** (Dokploy gestiona el TLS).
-6. **Deploy**.
+5. **Deploy** (todavía sin dominio). Espera a que `madrid-backend` y `madrid-frontend` estén arriba.
+6. **Domains**: añade tu dominio al servicio **`madrid-frontend`**, puerto **80**, HTTPS + Let's Encrypt (Dokploy inyecta los labels de Traefik; NO añadir labels manuales en el compose).
 
 ## 3. Qué ocurre en el primer arranque
 El `entrypoint.sh` del backend:

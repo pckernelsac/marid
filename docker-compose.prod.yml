@@ -2,17 +2,21 @@
 # La base de datos PostgreSQL ya existe como servicio aparte en Dokploy
 # (host: app-madrid-db-qfgme1); el backend la alcanza por `dokploy-network`.
 #
-# IMPORTANTE (lección aprendida):
-#  • Dokploy usa Docker Swarm: cada servicio registra su NOMBRE como alias DNS
-#    en `dokploy-network`. Por eso los servicios llevan nombres ÚNICOS con
-#    prefijo `madrid-` — si se llamaran `frontend`/`backend` colisionarían con
-#    los de otras apps en la misma red (cruce: una app cargando otra).
+# DISEÑO MULTI-PROYECTO (varios proyectos en el mismo VM/Dokploy):
+#  • Dokploy usa Docker Swarm y TODOS los proyectos comparten `dokploy-network`.
+#    En Swarm cada servicio registra su NOMBRE como alias DNS en esa red, así
+#    que dos proyectos con un servicio `frontend`/`backend` COLISIONAN (una app
+#    termina cargando la otra). Por eso:
+#       1) Los servicios llevan nombres ÚNICOS con prefijo `madrid-`.
+#       2) El tráfico interno (nginx ⇄ backend) va por una red PRIVADA propia
+#          (`madrid-internal`), no por la compartida. `dokploy-network` se usa
+#          solo para alcanzar la BD y para que Traefik exponga el frontend.
 #  • El dominio se configura SOLO desde la pestaña "Domains" de Dokploy
-#    (Service: madrid-frontend · Port: 80 · HTTPS + Let's Encrypt). NO se
-#    declaran labels de Traefik aquí: Dokploy los inyecta y duplicarlos da 404.
+#    (Service: madrid-frontend · Port: 80 · HTTPS + Let's Encrypt). NO declarar
+#    labels de Traefik aquí: Dokploy los inyecta y duplicarlos provoca 404.
 #  • Variables de entorno: pestaña "Environment" de Dokploy (ver
-#    .env.production.example). Dokploy las escribe en un .env que se interpola
-#    en los ${VAR}. No se usa env_file (gitignored, no está en el repo).
+#    .env.production.example); se interpolan en los ${VAR}. No se usa env_file
+#    (gitignored, no está en el repo clonado).
 
 services:
   madrid-backend:
@@ -37,7 +41,10 @@ services:
     volumes:
       - backend_uploads:/app/uploads
     networks:
-      - dokploy-network
+      - madrid-internal     # tráfico privado con el frontend
+      - dokploy-network     # solo para alcanzar la BD (app-madrid-db-qfgme1)
+    expose:
+      - "8000"
 
   madrid-frontend:
     build:
@@ -46,15 +53,20 @@ services:
     depends_on:
       - madrid-backend
     networks:
-      - dokploy-network
+      - madrid-internal     # nginx → madrid-backend:8000 (privado)
+      - dokploy-network     # exposición vía Traefik (dominio en la UI)
     # El dominio madrid.ose.net.pe se asigna a ESTE servicio desde la pestaña
-    # "Domains" de Dokploy (Port 80). Sin labels manuales aquí.
+    # "Domains" de Dokploy (Service: madrid-frontend · Port: 80). Sin labels.
 
 volumes:
   backend_uploads:
 
 networks:
-  # Única red: la de Dokploy (Traefik + la BD ya creada). Debe existir.
-  # nginx resuelve `madrid-backend` por su alias en esta red.
+  # Red privada de ESTE proyecto (aislada del resto). Overlay = requerido en
+  # Swarm para comunicación entre servicios.
+  madrid-internal:
+    driver: overlay
+    attachable: true
+  # Red compartida de Dokploy (Traefik + la BD ya creada). Debe existir.
   dokploy-network:
     external: true
