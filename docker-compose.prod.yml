@@ -5,19 +5,31 @@
 # `dokploy-network`.
 #
 # En Dokploy: tipo "Docker Compose", Compose File = docker-compose.prod.yml.
-# Define las variables de entorno (ver .env.production.example) en la UI o en
-# un .env.production junto a este archivo (NO se sube a git).
+# Define las variables de entorno (ver .env.production.example) en la pestaña
+# "Environment" de Dokploy: Dokploy las escribe en un .env que docker compose
+# carga e interpola en los ${VAR} de abajo. (No se usa env_file porque ese
+# archivo está gitignored y no existe en el repo clonado.)
 
 services:
   backend:
     build:
       context: ./backend
     restart: unless-stopped
-    env_file:
-      - .env.production
     environment:
-      ENVIRONMENT: production
-      WEB_CONCURRENCY: "3"
+      PROJECT_NAME: ${PROJECT_NAME:-Madrid Dental Studio}
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-3}
+      POSTGRES_SERVER: ${POSTGRES_SERVER}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      SECRET_KEY: ${SECRET_KEY}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
+      REFRESH_TOKEN_EXPIRE_DAYS: ${REFRESH_TOKEN_EXPIRE_DAYS:-7}
+      BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS:-[]}
+      FIRST_SUPERUSER_EMAIL: ${FIRST_SUPERUSER_EMAIL}
+      FIRST_SUPERUSER_PASSWORD: ${FIRST_SUPERUSER_PASSWORD}
     volumes:
       - backend_uploads:/app/uploads
     networks:
