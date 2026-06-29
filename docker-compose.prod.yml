@@ -47,7 +47,24 @@ services:
     networks:
       - internal
       - dokploy-network
-    # Asigna el dominio a ESTE servicio (puerto 80) desde la UI de Dokploy.
+    # ── Enrutado de Traefik (Dokploy NO añade labels solo en Compose) ──
+    # Sirve madrid.ose.net.pe → este contenedor (nginx, puerto 80).
+    labels:
+      - traefik.enable=true
+      # El contenedor está en 2 redes; Traefik debe usar la de Dokploy.
+      - traefik.docker.network=dokploy-network
+      # HTTP (80)
+      - traefik.http.routers.madrid-http.rule=Host(`madrid.ose.net.pe`)
+      - traefik.http.routers.madrid-http.entrypoints=web
+      - traefik.http.routers.madrid-http.service=madrid-frontend
+      # HTTPS (443) con certificado Let's Encrypt
+      - traefik.http.routers.madrid-https.rule=Host(`madrid.ose.net.pe`)
+      - traefik.http.routers.madrid-https.entrypoints=websecure
+      - traefik.http.routers.madrid-https.tls=true
+      - traefik.http.routers.madrid-https.tls.certresolver=letsencrypt
+      - traefik.http.routers.madrid-https.service=madrid-frontend
+      # Puerto interno del contenedor al que enruta Traefik
+      - traefik.http.services.madrid-frontend.loadbalancer.server.port=80
 
 volumes:
   backend_uploads:
