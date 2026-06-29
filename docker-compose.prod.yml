@@ -1,0 +1,49 @@
+# ── Madrid Dental Studio · Producción (Dokploy) ───────────────────────
+# La base de datos PostgreSQL ya existe como servicio aparte en Dokploy
+# (host: app-madrid-db-qfgme1), por eso aquí NO se define un contenedor de
+# Postgres. El backend la alcanza a través de la red compartida
+# `dokploy-network`.
+#
+# En Dokploy: tipo "Docker Compose", Compose File = docker-compose.prod.yml.
+# Define las variables de entorno (ver .env.production.example) en la UI o en
+# un .env.production junto a este archivo (NO se sube a git).
+
+services:
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      ENVIRONMENT: production
+      WEB_CONCURRENCY: "3"
+    volumes:
+      - backend_uploads:/app/uploads
+    networks:
+      - internal
+      - dokploy-network
+    expose:
+      - "8000"
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - internal
+      - dokploy-network
+    # Asigna el dominio a ESTE servicio (puerto 80) desde la UI de Dokploy.
+
+volumes:
+  backend_uploads:
+
+networks:
+  # Red privada para el tráfico frontend ⇄ backend.
+  internal:
+    driver: bridge
+  # Red de Dokploy (Traefik + la BD ya creada). Debe existir previamente.
+  dokploy-network:
+    external: true
