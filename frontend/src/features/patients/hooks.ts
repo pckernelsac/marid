@@ -56,3 +56,27 @@ export function useCreatePatient() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["patients"] }),
   });
 }
+
+export function useUpdatePatient() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: PatientFormData }) =>
+      apiFetch<Patient>(`/patients/${id}`, { method: "PATCH", body: data }),
+    onSuccess: (patient) => {
+      qc.invalidateQueries({ queryKey: ["patients"] });
+      qc.invalidateQueries({ queryKey: ["patient", patient.id] });
+      qc.invalidateQueries({
+        queryKey: ["patient-by-code", patient.public_id],
+      });
+    },
+  });
+}
+
+export function useDeletePatient() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) =>
+      apiFetch<void>(`/patients/${id}`, { method: "DELETE" }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["patients"] }),
+  });
+}

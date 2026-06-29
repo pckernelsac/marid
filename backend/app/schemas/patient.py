@@ -58,6 +58,7 @@ class PatientList(BaseModel):
     first_name: str
     last_name: str
     dni: str
+    birth_date: date
     phone: str | None = None
     photo_url: str | None = None
 
