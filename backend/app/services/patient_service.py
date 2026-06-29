@@ -24,6 +24,14 @@ class PatientService:
             )
         return patient
 
+    def get_by_public_id(self, public_id: str) -> Patient:
+        patient = self.repo.get_by_public_id(public_id)
+        if patient is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found"
+            )
+        return patient
+
     def create(self, data: PatientCreate) -> Patient:
         if self.repo.get_by_dni(data.dni):
             raise HTTPException(

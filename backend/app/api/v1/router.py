@@ -7,6 +7,7 @@ from app.api.v1.endpoints import (
     cashbox,
     clinic,
     clinical_history,
+    dashboard,
     odontogram,
     patients,
     radiographs,
@@ -28,3 +29,4 @@ api_router.include_router(budgets.router)
 api_router.include_router(clinic.router)
 api_router.include_router(radiographs.router)
 api_router.include_router(reports.router)
+api_router.include_router(dashboard.router)

@@ -14,6 +14,7 @@ export interface User {
 
 export interface Patient {
   id: number;
+  public_id: string;
   first_name: string;
   last_name: string;
   dni: string;
@@ -33,6 +34,7 @@ export interface Patient {
 
 export interface PatientListItem {
   id: number;
+  public_id: string;
   first_name: string;
   last_name: string;
   dni: string;

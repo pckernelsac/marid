@@ -1,4 +1,5 @@
 from datetime import date
+from uuid import uuid4
 
 from sqlalchemy import Date, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -7,10 +8,22 @@ from app.models.base import Base, TimestampMixin
 from app.models.enums import Sex
 
 
+def _new_public_id() -> str:
+    return uuid4().hex
+
+
 class Patient(Base, TimestampMixin):
     __tablename__ = "patients"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    # Identificador público opaco para URLs (evita exponer el id correlativo).
+    public_id: Mapped[str] = mapped_column(
+        String(32),
+        unique=True,
+        index=True,
+        nullable=False,
+        default=_new_public_id,
+    )
     first_name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     last_name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     dni: Mapped[str] = mapped_column(String(20), unique=True, index=True, nullable=False)

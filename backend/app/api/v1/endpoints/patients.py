@@ -36,6 +36,13 @@ def create_patient(db: DbSession, _: CurrentUser, data: PatientCreate) -> Patien
     return PatientService(db).create(data)
 
 
+@router.get("/by-code/{public_id}", response_model=PatientRead)
+def get_patient_by_code(
+    db: DbSession, _: CurrentUser, public_id: str
+) -> PatientRead:
+    return PatientService(db).get_by_public_id(public_id)
+
+
 @router.get("/{patient_id}", response_model=PatientRead)
 def get_patient(db: DbSession, _: CurrentUser, patient_id: int) -> PatientRead:
     return PatientService(db).get(patient_id)

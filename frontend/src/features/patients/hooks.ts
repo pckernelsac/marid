@@ -40,6 +40,14 @@ export function usePatient(id: number) {
   });
 }
 
+export function usePatientByCode(publicId: string | undefined) {
+  return useQuery({
+    queryKey: ["patient-by-code", publicId],
+    queryFn: () => apiFetch<Patient>(`/patients/by-code/${publicId}`),
+    enabled: Boolean(publicId),
+  });
+}
+
 export function useCreatePatient() {
   const qc = useQueryClient();
   return useMutation({

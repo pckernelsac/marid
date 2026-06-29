@@ -4,16 +4,16 @@ import { CalendarClock, Mail, MapPin, Phone } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { calcAge, initials } from "@/lib/utils";
-import { usePatient } from "@/features/patients/hooks";
+import { usePatientByCode } from "@/features/patients/hooks";
 import { OdontogramView } from "@/features/odontogram/OdontogramView";
 import { ClinicalHistoryForm } from "@/features/clinical-history/ClinicalHistoryForm";
 import { PatientTreatments } from "@/features/treatments/PatientTreatments";
 import { RadiographGallery } from "@/features/radiographs/RadiographGallery";
 
 export function PatientProfilePage() {
-  const { id } = useParams();
-  const patientId = Number(id);
-  const { data: patient, isLoading } = usePatient(patientId);
+  const { code } = useParams();
+  const { data: patient, isLoading } = usePatientByCode(code);
+  const patientId = patient?.id ?? 0;
 
   if (isLoading) {
     return <p className="text-sm text-muted-foreground">Cargando paciente…</p>;
@@ -61,13 +61,15 @@ export function PatientProfilePage() {
       </Card>
 
       <Tabs defaultValue="odontograma">
-        <TabsList>
-          <TabsTrigger value="odontograma">Odontograma</TabsTrigger>
-          <TabsTrigger value="historia">Historia clínica</TabsTrigger>
-          <TabsTrigger value="tratamientos">Tratamientos</TabsTrigger>
-          <TabsTrigger value="radiografias">Radiografías</TabsTrigger>
-          <TabsTrigger value="pagos">Pagos</TabsTrigger>
-        </TabsList>
+        <div className="-mx-1 overflow-x-auto px-1 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <TabsList className="w-max">
+            <TabsTrigger value="odontograma">Odontograma</TabsTrigger>
+            <TabsTrigger value="historia">Historia clínica</TabsTrigger>
+            <TabsTrigger value="tratamientos">Tratamientos</TabsTrigger>
+            <TabsTrigger value="radiografias">Radiografías</TabsTrigger>
+            <TabsTrigger value="pagos">Pagos</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="odontograma" className="mt-5">
           <OdontogramView patientId={patientId} />

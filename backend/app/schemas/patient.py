@@ -45,6 +45,7 @@ class PatientRead(PatientBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    public_id: str
     created_at: datetime
     updated_at: datetime
 
@@ -53,6 +54,7 @@ class PatientList(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    public_id: str
     first_name: str
     last_name: str
     dni: str

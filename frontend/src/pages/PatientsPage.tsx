@@ -89,7 +89,7 @@ export function PatientsPage() {
           data.items.map((p) => (
             <Link
               key={p.id}
-              to={`/pacientes/${p.id}`}
+              to={`/pacientes/${p.public_id}`}
               className="flex items-center gap-4 p-4 transition hover:bg-slate-50"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">

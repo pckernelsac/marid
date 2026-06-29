@@ -27,7 +27,7 @@ export function App() {
           <Route element={<AppLayout />}>
             <Route index element={<DashboardPage />} />
             <Route path="pacientes" element={<PatientsPage />} />
-            <Route path="pacientes/:id" element={<PatientProfilePage />} />
+            <Route path="pacientes/:code" element={<PatientProfilePage />} />
             <Route path="odontograma" element={<OdontogramPage />} />
             <Route path="agenda" element={<AgendaPage />} />
             <Route path="historia" element={<ClinicalHistoryPage />} />

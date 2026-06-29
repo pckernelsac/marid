@@ -13,6 +13,10 @@ class PatientRepository(BaseRepository[Patient]):
         stmt = select(Patient).where(Patient.dni == dni)
         return self.db.execute(stmt).scalar_one_or_none()
 
+    def get_by_public_id(self, public_id: str) -> Patient | None:
+        stmt = select(Patient).where(Patient.public_id == public_id)
+        return self.db.execute(stmt).scalar_one_or_none()
+
     def search(
         self, query: str | None, skip: int, limit: int
     ) -> tuple[list[Patient], int]:
