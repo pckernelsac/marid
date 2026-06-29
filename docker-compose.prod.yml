@@ -47,9 +47,26 @@ services:
     networks:
       - internal
       - dokploy-network
-    # El dominio se configura desde la pestaña "Domains" de Dokploy
-    # (Service: frontend · Port: 80 · HTTPS + Let's Encrypt). Dokploy inyecta
-    # los labels de Traefik con los nombres correctos de SU instancia.
+    # ── Enrutado de Traefik ───────────────────────────────────────────
+    # En apps Compose, Dokploy NO inyecta labels: hay que declararlos aquí.
+    # IMPORTANTE: NO añadir además un dominio en la pestaña "Domains" de la
+    # UI o se crean routers duplicados para el mismo host (= 404).
+    labels:
+      - traefik.enable=true
+      # El contenedor está en 2 redes; Traefik debe enrutar por la de Dokploy.
+      - traefik.docker.network=dokploy-network
+      # HTTP (80)
+      - traefik.http.routers.madrid-http.rule=Host(`madrid.ose.net.pe`)
+      - traefik.http.routers.madrid-http.entrypoints=web
+      - traefik.http.routers.madrid-http.service=madrid-frontend
+      # HTTPS (443) + Let's Encrypt
+      - traefik.http.routers.madrid-https.rule=Host(`madrid.ose.net.pe`)
+      - traefik.http.routers.madrid-https.entrypoints=websecure
+      - traefik.http.routers.madrid-https.tls=true
+      - traefik.http.routers.madrid-https.tls.certresolver=letsencrypt
+      - traefik.http.routers.madrid-https.service=madrid-frontend
+      # Puerto del contenedor (nginx)
+      - traefik.http.services.madrid-frontend.loadbalancer.server.port=80
 
 volumes:
   backend_uploads:
