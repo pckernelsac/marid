@@ -9,6 +9,7 @@ import { OdontogramView } from "@/features/odontogram/OdontogramView";
 import { ClinicalHistoryForm } from "@/features/clinical-history/ClinicalHistoryForm";
 import { PatientTreatments } from "@/features/treatments/PatientTreatments";
 import { RadiographGallery } from "@/features/radiographs/RadiographGallery";
+import { PatientAccount } from "@/features/account/PatientAccount";
 
 export function PatientProfilePage() {
   const { code } = useParams();
@@ -87,19 +88,9 @@ export function PatientProfilePage() {
           <RadiographGallery patientId={patientId} />
         </TabsContent>
         <TabsContent value="pagos" className="mt-5">
-          <Placeholder text="Historial de pagos." />
+          <PatientAccount patientId={patientId} />
         </TabsContent>
       </Tabs>
     </div>
-  );
-}
-
-function Placeholder({ text }: { text: string }) {
-  return (
-    <Card>
-      <CardContent className="p-12 text-center text-sm text-muted-foreground">
-        {text}
-      </CardContent>
-    </Card>
   );
 }

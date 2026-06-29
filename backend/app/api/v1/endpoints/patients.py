@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Query, status
 
 from app.api.deps import CurrentUser, DbSession
+from app.schemas.account import PatientAccount
 from app.schemas.patient import (
     PaginatedPatients,
     PatientCreate,
@@ -8,6 +9,7 @@ from app.schemas.patient import (
     PatientRead,
     PatientUpdate,
 )
+from app.services.account_service import AccountService
 from app.services.patient_service import PatientService
 
 router = APIRouter(prefix="/patients", tags=["patients"])
@@ -41,6 +43,13 @@ def get_patient_by_code(
     db: DbSession, _: CurrentUser, public_id: str
 ) -> PatientRead:
     return PatientService(db).get_by_public_id(public_id)
+
+
+@router.get("/{patient_id}/account", response_model=PatientAccount)
+def get_patient_account(
+    db: DbSession, _: CurrentUser, patient_id: int
+) -> PatientAccount:
+    return AccountService(db).get(patient_id)
 
 
 @router.get("/{patient_id}", response_model=PatientRead)
