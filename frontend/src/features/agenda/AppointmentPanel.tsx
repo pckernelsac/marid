@@ -205,7 +205,7 @@ export function AppointmentPanel({
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="space-y-2">
             <Label>Tipo</Label>
             <Select value={type} onChange={(e) => setType(e.target.value)}>
@@ -232,7 +232,7 @@ export function AppointmentPanel({
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="space-y-2">
             <Label>Fecha</Label>
             <Input

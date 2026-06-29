@@ -30,7 +30,8 @@ export function MonthView({
       );
 
   return (
-    <div>
+    <div className="overflow-x-auto">
+      <div className="min-w-[640px]">
       <div className="grid grid-cols-7 border-b border-slate-100">
         {WEEK_LABELS.map((w) => (
           <div
@@ -98,6 +99,7 @@ export function MonthView({
             </div>
           );
         })}
+      </div>
       </div>
     </div>
   );

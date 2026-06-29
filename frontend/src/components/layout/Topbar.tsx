@@ -8,7 +8,7 @@ export function Topbar() {
   const { user, logout } = useAuth();
   const { setMobileOpen } = useSidebar();
   return (
-    <header className="no-print sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-slate-100 bg-white/70 px-6 backdrop-blur">
+    <header className="no-print sticky top-0 z-30 flex h-16 items-center justify-between gap-2 border-b border-slate-100 bg-white/70 px-4 backdrop-blur sm:gap-4 sm:px-6">
       <button
         onClick={() => setMobileOpen(true)}
         aria-label="Abrir menú"
@@ -37,9 +37,11 @@ export function Topbar() {
           className="h-10 w-full rounded-xl border border-slate-100 bg-slate-50/60 pl-9 pr-3 text-sm outline-none transition focus:border-primary/30 focus:bg-white focus:ring-2 focus:ring-primary/10"
         />
       </div>
-      <div className="flex items-center gap-3">
-        <div className="text-right leading-tight">
-          <p className="text-sm font-medium">{user?.full_name}</p>
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className="hidden text-right leading-tight sm:block">
+          <p className="max-w-[160px] truncate text-sm font-medium">
+            {user?.full_name}
+          </p>
           <p className="text-xs capitalize text-muted-foreground">{user?.role}</p>
         </div>
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#003d9c]/10 text-sm font-semibold text-[#003d9c]">

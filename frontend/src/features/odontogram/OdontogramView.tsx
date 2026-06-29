@@ -138,7 +138,7 @@ export function OdontogramView({ patientId }: { patientId: number }) {
         </div>
       </div>
 
-      <Card className="overflow-x-auto p-6">
+      <Card className="overflow-x-auto p-3 sm:p-6">
         {isLoading ? (
           <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">
             Cargando odontograma…

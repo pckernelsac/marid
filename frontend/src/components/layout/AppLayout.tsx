@@ -19,7 +19,7 @@ export function AppLayout() {
         <MobileSidebar />
         <div className="relative z-10 flex min-w-0 flex-1 flex-col">
           <Topbar />
-          <main className="flex-1 px-6 py-8">
+          <main className="flex-1 px-4 py-6 sm:px-6 sm:py-8">
             <div className="mx-auto w-full max-w-[1400px]">
               <Outlet />
             </div>

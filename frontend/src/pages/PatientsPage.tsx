@@ -58,7 +58,7 @@ export function PatientsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Pacientes</h1>
           <p className="text-sm text-muted-foreground">
@@ -131,7 +131,7 @@ export function PatientsPage() {
           </div>
         }
       >
-        <form onSubmit={submit} className="grid grid-cols-2 gap-4">
+        <form onSubmit={submit} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Nombre">
             <Input
               value={form.first_name}
@@ -226,7 +226,7 @@ function Field({
   full?: boolean;
 }) {
   return (
-    <div className={`space-y-2 ${full ? "col-span-2" : ""}`}>
+    <div className={`space-y-2 ${full ? "sm:col-span-2" : ""}`}>
       <Label>{label}</Label>
       {children}
     </div>
