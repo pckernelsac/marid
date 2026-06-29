@@ -20,5 +20,8 @@ COPY --from=build /app/dist /usr/share/nginx/html
 
 EXPOSE 80
 
+# Usa 127.0.0.1 (NO "localhost"): en Alpine localhost resuelve a ::1 (IPv6) y
+# nginx escucha solo en IPv4 → el healthcheck fallaría (unhealthy) y Traefik
+# descartaría el contenedor del router (= 404).
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD wget -qO- http://localhost:80/ >/dev/null 2>&1 || exit 1
+    CMD wget -q -O /dev/null http://127.0.0.1:80/ || exit 1
