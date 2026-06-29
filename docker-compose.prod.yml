@@ -67,6 +67,21 @@ services:
       - traefik.http.routers.madrid-https.service=madrid-frontend
       # Puerto del contenedor (nginx)
       - traefik.http.services.madrid-frontend.loadbalancer.server.port=80
+    # Mismos labels a nivel de servicio: si Dokploy despliega en modo Swarm
+    # (docker stack), Traefik lee deploy.labels y NO los labels de contenedor.
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=dokploy-network
+        - traefik.http.routers.madrid-http.rule=Host(`madrid.ose.net.pe`)
+        - traefik.http.routers.madrid-http.entrypoints=web
+        - traefik.http.routers.madrid-http.service=madrid-frontend
+        - traefik.http.routers.madrid-https.rule=Host(`madrid.ose.net.pe`)
+        - traefik.http.routers.madrid-https.entrypoints=websecure
+        - traefik.http.routers.madrid-https.tls=true
+        - traefik.http.routers.madrid-https.tls.certresolver=letsencrypt
+        - traefik.http.routers.madrid-https.service=madrid-frontend
+        - traefik.http.services.madrid-frontend.loadbalancer.server.port=80
 
 volumes:
   backend_uploads:
